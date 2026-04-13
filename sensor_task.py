@@ -1,19 +1,21 @@
+# sensor_task.py
 import numpy as np
-import time
-#simulating large data operations
-import time
+from utils import COST_TABLE
 
-def sensor_task():
-    start = time.time()
-
-    data = np.random.rand(1000)
+def sensor_task(data_size=1000):
+    # --- Functional Logic ---
+    data = np.random.rand(data_size)
     scaled_data = data * 100
     filtered_data = scaled_data[scaled_data > 50]
-
-    end = time.time()
-
-    return len(filtered_data), (end - start)
-if __name__ == "__main__":
-    result, exec_time = sensor_task()
-    print("Filtered values:", result)
-    print("Execution time:", exec_time)
+    
+    # --- Simulation Logic ---
+    # 1. Loading raw data (data_size loads)
+    # 2. Scaling data (data_size multiplications)
+    # 3. Filtering data (data_size comparisons/logic)
+    
+    instructions = data_size * 3
+    cycles = (data_size * COST_TABLE["LOAD_STORE"]) + \
+             (data_size * COST_TABLE["MUL_DIV"]) + \
+             (data_size * COST_TABLE["LOGIC"])
+             
+    return len(filtered_data), instructions, cycles
