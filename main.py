@@ -18,7 +18,7 @@ def run_performance_simulation():
     # 3. Execute Decision Task (Logic Intensive)
     # Returns: (action_string, real_time, instruction_count, cycle_count)
     drive_action, real_time_val, decision_instr, decision_cycles = decision_task()
-    
+
     # --- Aggregation ---
     total_system_instructions = sensor_instr + image_instr + decision_instr
     total_system_cycles = sensor_cycles + image_cycles + decision_cycles
@@ -46,3 +46,4 @@ def run_performance_simulation():
 
 if __name__ == "__main__":
     run_performance_simulation()
+    print(decision_task())
