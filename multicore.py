@@ -8,20 +8,42 @@ from decision_task import decision_task
 
 def run_workload(_=None):
     """
-    Runs the full system workload once:
-    sensor + image + decision
+    Runs the full system workload once and returns both simulated
+    instruction/cycle totals and per-task execution timing.
     """
-    sensor_result, sensor_time = sensor_task()
-    image_result, image_time = image_task()
-    decision_result, decision_time = decision_task()
+    sensor_start = time.time()
+    obs_count, sensor_instr, sensor_cycles = sensor_task()
+    sensor_time = time.time() - sensor_start
 
-    total_task_time = sensor_time + image_time + decision_time
+    image_start = time.time()
+    img_result, image_instr, image_cycles = image_task()
+    image_time = time.time() - image_start
+
+    decision_start = time.time()
+    drive_action, decision_time, decision_instr, decision_cycles = decision_task()
+    decision_wall_time = time.time() - decision_start
+
+    total_instr = sensor_instr + image_instr + decision_instr
+    total_cycles = sensor_cycles + image_cycles + decision_cycles
+    total_task_time = sensor_time + image_time + decision_wall_time
 
     return {
+        "sensor_result": obs_count,
         "sensor_time": sensor_time,
+        "sensor_instructions": sensor_instr,
+        "sensor_cycles": sensor_cycles,
+        "image_result": img_result,
         "image_time": image_time,
+        "image_instructions": image_instr,
+        "image_cycles": image_cycles,
+        "decision_result": drive_action,
         "decision_time": decision_time,
-        "task_time": total_task_time
+        "decision_wall_time": decision_wall_time,
+        "decision_instructions": decision_instr,
+        "decision_cycles": decision_cycles,
+        "task_time": total_task_time,
+        "instructions": total_instr,
+        "cycles": total_cycles
     }
 
 
@@ -66,7 +88,9 @@ def main():
                 f"  Task Run {i}: "
                 f"Sensor={result['sensor_time']:.6f}s, "
                 f"Image={result['image_time']:.6f}s, "
-                f"Decision={result['decision_time']:.6f}s"
+                f"Decision={result['decision_time']:.6f}s, "
+                f"TotalInstr={result['instructions']}, "
+                f"TotalCycles={result['cycles']}"
             )
 
         print()
