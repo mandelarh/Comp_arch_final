@@ -4,33 +4,45 @@ from image_task import image_task
 from decision_task import decision_task
 from utils import CLOCK_FREQUENCY
 
-def run_simulation():
-    # Get data from all tasks
-    _, instr_s, cycles_s = sensor_task()
-    _, instr_i, cycles_i = image_task()
-    _, instr_d, cycles_d = decision_task()
+def run_performance_simulation():
+    print("-" * 20 + " Processor Simulation Start " + "-" * 20)
+
+    # 1. Execute Sensor Task (Memory Intensive)
+    # Returns: (filtered_count, instruction_count, cycle_count)
+    obs_count, sensor_instr, sensor_cycles = sensor_task()
+
+    # 2. Execute Image Task (Compute Intensive)
+    # Returns: (sum_result, instruction_count, cycle_count)
+    img_result, image_instr, image_cycles = image_task()
+
+    # 3. Execute Decision Task (Logic Intensive)
+    # Returns: (action_string, real_time, instruction_count, cycle_count)
+    drive_action, real_time_val, decision_instr, decision_cycles = decision_task()
     
-    # Totals
-    total_instructions = instr_s + instr_i + instr_d
-    total_cycles = cycles_s + cycles_i + cycles_d
+    # --- Aggregation ---
+    total_system_instructions = sensor_instr + image_instr + decision_instr
+    total_system_cycles = sensor_cycles + image_cycles + decision_cycles
+
+    # --- Performance Metric Calculations ---
+    # CPI = total cycles / total instructions
+    average_cpi = total_system_cycles / total_system_instructions
     
-    # --- Calculations ---
-    # CPI = total cycles / # of instructions
-    cpi = total_cycles / total_instructions
-    
-    # ET = (total instructions * CPI) / clock frequency
-    execution_time = (total_instructions * cpi) / CLOCK_FREQUENCY
-    
-    print(f"Total Instructions: {total_instructions}")
-    print(f"Total Cycles: {total_cycles}")
-    print(f"CPI: {cpi:.2f}")
-    print(f"Simulated Execution Time (ET): {execution_time:.6f} seconds")
-    
-    # Check Real-Time Constraint (10 FPS = 100ms = 0.1s)
-    if execution_time <= 0.1:
-        print("RESULT: Real-time requirement MET.")
+    # ET = (total instructions * CPI) / clock frequency (1 GHz)
+    simulated_execution_time = (total_system_instructions * average_cpi) / CLOCK_FREQUENCY
+
+    # --- Output Results ---
+    print(f"Total Instructions Executed: {total_system_instructions:,}")
+    print(f"Total Simulated Cycles:      {total_system_cycles:,}")
+    print(f"System-Wide Average CPI:     {average_cpi:.2f}")
+    print(f"Simulated Execution Time:    {simulated_execution_time:.6f} seconds")
+
+    # --- Real-Time Constraint Check (10 FPS = 0.1s Deadline) ---
+    print("-" * 50)
+    if simulated_execution_time <= 0.1:
+        print("STATUS: PASS - System met the 100ms real-time deadline.")
     else:
-        print("RESULT: Real-time requirement FAILED.")
+        print("STATUS: FAIL - System exceeded 100ms deadline (Risk of collision).")
+    print("-" * 50)
 
 if __name__ == "__main__":
-    run_simulation()
+    run_performance_simulation()
