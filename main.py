@@ -11,7 +11,7 @@ def run_performance_simulation(print_results=True):
     obs_count, sensor_instr, sensor_cycles = sensor_task()
     img_result, image_instr, image_cycles = image_task()
     drive_action, real_time_val, decision_instr, decision_cycles = decision_task()
-    
+    wall_time = time.time() - system_start
     # --- Aggregation ---
     total_system_instructions = sensor_instr + image_instr + decision_instr
     total_system_cycles = sensor_cycles + image_cycles + decision_cycles
@@ -52,4 +52,4 @@ def run_performance_simulation(print_results=True):
 
 if __name__ == "__main__":
     run_performance_simulation()
-    print(decision_task())
+  

@@ -1,5 +1,4 @@
 # utils.py
-import time
 
 # Cost Table: Defines cycles per instruction type
 COST_TABLE = {
@@ -9,10 +8,5 @@ COST_TABLE = {
     "LOGIC": 1
 }
 
-CLOCK_FREQUENCY = 1_000_000_000  # 1 GHz (10^9 cycles per second)
+CLOCK_FREQUENCY = 1_000_000_000  
 
-def measure_time(func):
-    start = time.time()
-    result = func()
-    end = time.time()
-    return result, (end - start)
